@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Secure Audit – WRONG vs TRUE Examples</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- CSP (Demo Safe) -->
+<meta http-equiv="Content-Security-Policy"
+      content="default-src 'self'; style-src 'self' 'unsafe-inline';">
+
+<style>
+/* ===== ROOT & RESET ===== */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f4f6f9;
+    margin: 0;
+    padding: clamp(12px, 3vw, 24px);
+    line-height: 1.6;
+}
+
+/* ===== LAYOUT CONTAINER ===== */
+body > * {
+  /*  max-width: 1200px; */
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* ===== HEADINGS ===== */
+h1 {
+    text-align: center;
+    color: #0b5ed7;
+    font-size: clamp(1.3rem, 3vw, 2rem);
+    margin-bottom: 10px;
+}
+
+h2 {
+    font-size: clamp(1.05rem, 2.5vw, 1.4rem);
+}
+
+/* ===== SECTION CARD ===== */
+.section {
+    background: #fff;
+    margin-bottom: 20px;
+    padding: clamp(12px, 3vw, 20px);
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+.section h2 {
+    border-bottom: 2px solid #dee2e6;
+    padding-bottom: 6px;
+    margin-bottom: 12px;
+}
+
+/* ===== WRONG / TRUE BLOCKS ===== */
+.wrong,
+.true {
+    padding: 12px;
+    margin-bottom: 12px;
+    border-radius: 4px;
+}
+
+.wrong {
+    background: #ffe6e6;
+    border-left: 5px solid #dc3545;
+}
+
+.true {
+    background: #e6ffed;
+    border-left: 5px solid #198754;
+}
+
+/* ===== CODE BLOCK ===== */
+code {
+    display: block;
+    background: #f1f1f1;
+    padding: 10px;
+    margin-top: 8px;
+    border-radius: 4px;
+    font-size: clamp(0.8rem, 2.5vw, 0.95rem);
+    overflow-x: auto;
+    white-space: pre;
+    max-width: 100%;
+}
+
+/* ===== LISTS ===== */
+ul {
+    margin: 0;
+    padding-left: 20px;
+}
+
+/* ===== FOOTER ===== */
+footer {
+    text-align: center;
+    margin: 30px auto 10px;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+/* ===== MOBILE OPTIMIZATION ===== */
+@media (max-width: 600px) {
+    .wrong,
+    .true {
+        padding: 10px;
+    }
+
+    code {
+        font-size: 0.8rem;
+    }
+}
+/* --- Navigation Bar Styles --- */
+.navbar {
+    background: #2c3e50; /* Dark professional blue */
+    color: white;
+    padding: 0 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: fixed; /* Stays at the top while scrolling */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 70px;
+    z-index: 1000;
+    box-sizing: border-box;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+}
+
+.nav-logo {
+    font-weight: bold;
+    font-size: 1.4rem;
+    letter-spacing: 1px;
+    display: flex;
+    align-items: center;
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    margin: 0;
+    padding: 0;
+}
+
+.nav-links li {
+    margin-left: 25px;
+}
+
+.nav-links a {
+    color: #ecf0f1;
+    text-decoration: none;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    padding: 8px 12px;
+    border-radius: 4px;
+}
+
+.nav-links a:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #3498db;
+}
+
+/* --- Mobile Menu Toggle (Hamburger) --- */
+.menu-toggle {
+    display: none; /* Hidden on Desktop */
+    flex-direction: column;
+    justify-content: space-around;
+    width: 30px;
+    height: 21px;
+    cursor: pointer;
+}
+
+.menu-toggle span {
+    width: 100%;
+    height: 3px;
+    background: white;
+    border-radius: 10px;
+    transition: all 0.3s linear;
+}
+
+/* --- Responsive Breakpoint (Mobile/Tablet) --- */
+@media (max-width: 768px) {
+    .menu-toggle {
+        display: flex; /* Show hamburger on mobile */
+    }
+
+    .nav-links {
+        display: none; /* Hide links by default */
+        flex-direction: column;
+        width: 100%;
+        position: absolute;
+        top: 70px; /* Directly below navbar */
+        left: 0;
+        background: #2c3e50;
+        padding: 20px 0;
+        border-top: 1px solid rgba(255,255,255,0.1);
+        text-align: center;
+    }
+
+    /* When JavaScript toggles this class */
+    .nav-links.nav-active {
+        display: flex;
+        animation: slideIn 0.3s ease forwards;
+    }
+
+    .nav-links li {
+        margin: 15px 0;
+    }
+
+    @keyframes slideIn {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+}
+</style>
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="nav-logo">🛡️ SECURE_AUDIT</div>
+        <div class="menu-toggle" onclick="document.querySelector('.nav-links').classList.toggle('nav-active')">
+            <span></span><span></span><span></span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="secure_true_web.html">Secure Audit</a></li>
+            <li><a href="closure_audit_pro.html">Closure Process</a></li>
+        </ul>
+    </nav>
+
+<h1 style="margin-top:50px;">🔐 Secure Audit – WRONG ❌ vs TRUE ✅</h1>
+
+
+<!-- INSERT -->
+<div class="section">
+<h2>1️⃣ INSERT Query</h2>
+
+<div class="wrong">
+❌ <strong>WRONG (SQL Injection Risk)</strong>
+<ul>
+<li>User input directly concatenated</li>
+<li>No validation</li>
+</ul>
+<code>
+$name  = $_POST['name'];
+$email = $_POST['email'];
+
+$sql = "INSERT INTO users (name, email)
+        VALUES ('$name', '$email')";
+pg_query($conn, $sql);
+</code>
+</div>
+
+<div class="true">
+✅ <strong>TRUE (Secure – Prepared Statement)</strong>
+<ul>
+<li>Parameterized query</li>
+<li>Input validation</li>
+</ul>
+<code>
+$name  = filter_input(INPUT_POST, 'name', FILTER_SANITIZE_SPECIAL_CHARS);
+$email = filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL);
+
+$sql = "INSERT INTO users (name, email)
+        VALUES (:name, :email)";
+
+$stmt = $pdo->prepare($sql);
+$stmt->execute([
+  ':name'  => $name,
+  ':email'=> $email
+]);
+</code>
+</div>
+</div>
+
+<!-- UPDATE -->
+<div class="section">
+<h2>2️⃣ UPDATE Query</h2>
+
+<div class="wrong">
+❌ <strong>WRONG</strong>
+<ul>
+<li>ID tampering possible</li>
+<li>Dynamic SQL</li>
+</ul>
+<code>
+$id   = $_GET['id'];
+$name = $_POST['name'];
+
+$sql = "UPDATE users SET name='$name' WHERE id=$id";
+pg_query($conn, $sql);
+</code>
+</div>
+
+<div class="true">
+✅ <strong>TRUE</strong>
+<ul>
+<li>POST method</li>
+<li>Validated ID</li>
+</ul>
+<code>
+$id   = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
+$name = filter_input(INPUT_POST, 'name', FILTER_SANITIZE_SPECIAL_CHARS);
+
+$sql = "UPDATE users SET name = :name WHERE id = :id";
+
+$stmt = $pdo->prepare($sql);
+$stmt->execute([
+  ':name' => $name,
+  ':id'   => $id
+]);
+</code>
+</div>
+</div>
+
+<!-- DELETE -->
+<div class="section">
+<h2>3️⃣ DELETE Query</h2>
+
+<div class="wrong">
+❌ <strong>WRONG</strong>
+<ul>
+<li>DELETE via GET</li>
+<li>No CSRF protection</li>
+<li>Injection risk</li>
+</ul>
+<code>
+$id = $_GET['id'];
+$sql = "DELETE FROM users WHERE id=$id";
+pg_query($conn, $sql);
+</code>
+</div>
+
+<div class="true">
+✅ <strong>TRUE</strong>
+<ul>
+<li>POST only</li>
+<li>Validated input</li>
+<li>Secure execution</li>
+</ul>
+<code>
+$id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
+if (!$id) { exit('Invalid ID'); }
+
+$sql = "DELETE FROM users WHERE id = :id";
+$stmt = $pdo->prepare($sql);
+$stmt->execute([
+  ':id' => $id
+]);
+</code>
+</div>
+</div>
+
+<!-- EXTRA SECURITY -->
+<div class="section">
+<h2>🔐 Additional Security Controls</h2>
+
+<div class="true">
+<ul>
+<li>Authorization check before UPDATE/DELETE</li>
+<li>Transactions for data integrity</li>
+<li>Least privilege database user</li>
+</ul>
+
+<code>
+if ($_SESSION['role'] !== 'ADMIN') {
+  http_response_code(403);
+  exit;
+}
+</code>
+
+<code>
+$pdo->beginTransaction();
+try {
+  $stmt->execute();
+  $pdo->commit();
+} catch (Exception $e) {
+  $pdo->rollBack();
+  error_log($e->getMessage());
+}
+</code>
+</div>
+</div>
+
+<!-- AUDIT NOTE -->
+<div class="section">
+<h2>📜 Audit Note</h2>
+<div class="true">
+Database INSERT, UPDATE, and DELETE operations are implemented using
+prepared statements with parameterized queries. Direct user input
+concatenation is avoided, preventing SQL injection vulnerabilities.
+</div>
+</div>
+<!-- 1 Authentication -->
+<div class="section">
+<h2>1. Authentication & Passwords</h2>
+<div class="wrong">
+❌ <strong>WRONG</strong>
+<ul>
+<li>Plain text passwords</li>
+<li>Weak password policy</li>
+</ul>
+<code>password = 'admin123';</code>
+</div>
+<div class="true">
+✅ <strong>TRUE</strong>
+<ul>
+<li>Hashed passwords (bcrypt)</li>
+<li>Strong password rules</li>
+</ul>
+<code>password_hash($password, PASSWORD_BCRYPT);</code>
+</div>
+</div>
+
+<!-- 2 Authorization -->
+<div class="section">
+<h2>2. Authorization & Access Control</h2>
+<div class="wrong">
+❌ Users access admin URLs directly
+<code>/admin/delete.php?id=5</code>
+</div>
+<div class="true">
+✅ Role-based access enforced
+<code>
+if ($_SESSION['role'] !== 'ADMIN') {
+  http_response_code(403);
+  exit;
+}
+</code>
+</div>
+</div>
+
+<!-- 3 Session -->
+<div class="section">
+<h2>3. Session Management</h2>
+<div class="wrong">
+❌ Session ID reused, no timeout
+<code>session_id($_GET['sid']);</code>
+</div>
+<div class="true">
+✅ Secure session handling
+<code>
+session_regenerate_id(true);
+ini_set('session.cookie_httponly',1);
+ini_set('session.cookie_secure',1);
+</code>
+</div>
+</div>
+
+<!-- 4 HTTPS -->
+<div class="section">
+<h2>4. Transport Security (HTTPS)</h2>
+<div class="wrong">
+❌ HTTP allowed
+<code>http://example.com/login</code>
+</div>
+<div class="true">
+✅ HTTPS enforced
+<code>RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301]</code>
+</div>
+</div>
+
+<!-- 5 Input Validation -->
+<div class="section">
+<h2>5. Input Validation</h2>
+<div class="wrong">
+❌ Direct user input
+<code>$name = $_POST['name'];</code>
+</div>
+<div class="true">
+✅ Server-side validation
+<code>$name = filter_input(INPUT_POST,'name',FILTER_SANITIZE_SPECIAL_CHARS);</code>
+</div>
+</div>
+
+<!-- 6 SQL Injection -->
+<div class="section">
+<h2>6. SQL Injection</h2>
+<div class="wrong">
+❌ Dynamic SQL
+<code>"SELECT * FROM users WHERE id='$id'"</code>
+</div>
+<div class="true">
+✅ Prepared statements
+<code>
+$stmt = $pdo->prepare("SELECT * FROM users WHERE id=?");
+$stmt->execute([$id]);
+</code>
+</div>
+</div>
+
+<!-- 7 XSS -->
+<div class="section">
+<h2>7. Cross-Site Scripting (XSS)</h2>
+<div class="wrong">
+❌ Output not encoded
+<code>echo $_GET['msg'];</code>
+</div>
+<div class="true">
+✅ Output encoding + CSP
+<code>htmlspecialchars($msg, ENT_QUOTES);</code>
+</div>
+</div>
+
+<!-- 8 CSRF -->
+<div class="section">
+<h2>8. CSRF Protection</h2>
+<div class="wrong">
+❌ No CSRF token
+</div>
+<div class="true">
+✅ CSRF token validation
+<code>$_SESSION['csrf'] = bin2hex(random_bytes(32));</code>
+</div>
+</div>
+
+<!-- 9 CSP -->
+<div class="section">
+<h2>9. Content Security Policy (CSP)</h2>
+<div class="wrong">
+❌ Unsafe CSP
+<code>default-src * 'unsafe-inline';</code>
+</div>
+<div class="true">
+✅ Secure CSP
+<code>
+default-src 'self';
+script-src 'self';
+frame-ancestors 'none';
+</code>
+</div>
+</div>
+
+<!-- 10 Security Headers -->
+<div class="section">
+<h2>10. Security Headers</h2>
+<div class="wrong">
+❌ Headers missing
+</div>
+<div class="true">
+✅ Security headers enabled
+<code>
+X-Content-Type-Options: nosniff
+X-Frame-Options: DENY
+</code>
+</div>
+</div>
+
+<!-- 11 Error Handling -->
+<div class="section">
+<h2>11. Error Handling</h2>
+<div class="wrong">
+❌ Detailed errors shown
+</div>
+<div class="true">
+✅ Generic errors + logging
+<code>ini_set('display_errors',0);</code>
+</div>
+</div>
+
+<!-- 12 Logging -->
+<div class="section">
+<h2>12. Logging & Audit Trail</h2>
+<div class="wrong">
+❌ No logs
+</div>
+<div class="true">
+✅ User activity logged
+<code>User | Action | IP | Time</code>
+</div>
+</div>
+
+<!-- 13 File Upload -->
+<div class="section">
+<h2>13. File Upload Security</h2>
+<div class="wrong">
+❌ Any file upload allowed
+</div>
+<div class="true">
+✅ File type & size validation
+<code>$allowed = ['pdf','jpg','png'];</code>
+</div>
+</div>
+
+<!-- 14 Database -->
+<div class="section">
+<h2>14. Database Security</h2>
+<div class="wrong">
+❌ Superuser DB access
+</div>
+<div class="true">
+✅ Least privilege access
+<code>GRANT SELECT,INSERT TO app_user;</code>
+</div>
+</div>
+
+<!-- 15 Configuration -->
+<div class="section">
+<h2>15. Configuration & Secrets</h2>
+<div class="wrong">
+❌ Credentials in code
+</div>
+<div class="true">
+✅ Env-based configuration
+</div>
+</div>
+
+<!-- 16 Rate Limiting -->
+<div class="section">
+<h2>16. Rate Limiting</h2>
+<div class="wrong">
+❌ Unlimited login attempts
+</div>
+<div class="true">
+✅ Login throttling enabled
+</div>
+</div>
+
+<!-- 17 Backup -->
+<div class="section">
+<h2>17. Backup & Recovery</h2>
+<div class="wrong">
+❌ No backup strategy
+</div>
+<div class="true">
+✅ Regular encrypted backups
+</div>
+</div>
+
+<!-- 18 Compliance -->
+<div class="section">
+<h2>18. Compliance</h2>
+<div class="wrong">
+❌ OWASP ignored
+</div>
+<div class="true">
+✅ OWASP Top 10 followed
+</div>
+</div>
+
+<!-- Closure -->
+<div class="section">
+<h2>📜 Audit Closure Statement</h2>
+<div class="true">
+All identified security issues have been remediated.
+The application complies with OWASP Top 10 and secure coding standards.
+</div>
+</div>
+
+<footer>
+✔ Secure Audit – WRONG vs TRUE | Government & CERT-In Ready
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Secure Audit Portal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        :root {
+            --wrong-bg: #fff5f5;
+            --wrong-border: #dc3545;
+            --true-bg: #f6fff9;
+            --true-border: #198754;
+            --header-blue: #0b5ed7;
+            --nav-bg: #2c3e50;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #f4f6f9;
+            margin: 0;
+            padding-top: 70px; /* Space for fixed navbar */
+            color: #333;
+        }
+
+        /* --- Navigation Bar --- */
+        .navbar {
+            background: var(--nav-bg);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            box-sizing: border-box;
+        }
+
+        .nav-logo { font-weight: bold; font-size: 1.2rem; }
+
+        .nav-links {
+            list-style: none;
+            display: flex;
+            margin: 0;
+            padding: 0;
+        }
+
+        .nav-links li { margin-left: 20px; }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover { color: #3498db; }
+
+        /* --- Grid Layout --- */
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 15px;
+        }
+
+        .section-header {
+            background: var(--header-blue);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px 8px 0 0;
+            font-weight: bold;
+            margin-top: 30px;
+        }
+
+        .audit-row {
+            display: grid;
+            grid-template-columns: 1fr; /* Mobile stacks vertically */
+            background: #fff;
+            border-radius: 0 0 8px 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            margin-bottom: 10px;
+        }
+
+        @media (min-width: 992px) {
+            .audit-row {
+                grid-template-columns: 1fr 1.5fr 1.5fr; /* 3 Columns on Desktop */
+            }
+        }
+
+        .column {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+        }
+
+        /* --- Content Blocks --- */
+        .box { padding: 15px; border-radius: 6px; height: 100%; }
+        .box-wrong { background: var(--wrong-bg); border-left: 5px solid var(--wrong-border); }
+        .box-true { background: var(--true-bg); border-left: 5px solid var(--true-border); }
+
+        code {
+            display: block;
+            background: #272822;
+            color: #f8f8f2;
+            padding: 12px;
+            margin-top: 10px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            white-space: pre-wrap;
+        }
+
+        /* --- Mobile Nav Toggle --- */
+        .menu-toggle { display: none; flex-direction: column; cursor: pointer; }
+        .menu-toggle span { width: 25px; height: 3px; background: white; margin: 2px 0; }
+
+        @media (max-width: 768px) {
+            .nav-links { display: none; width: 100%; flex-direction: column; position: absolute; top: 55px; left: 0; background: var(--nav-bg); padding: 10px 0; }
+            .nav-links li { margin: 10px 20px; }
+            .menu-toggle { display: flex; }
+            .nav-active { display: flex; } /* To be toggled via JS if needed */
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="nav-logo">🛡️ SECURE_AUDIT</div>
+        <div class="menu-toggle" onclick="document.querySelector('.nav-links').classList.toggle('nav-active')">
+            <span></span><span></span><span></span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="#">Home</a></li>
+            <li><a href="secure_true_web.html">Secure Audit</a></li>
+            <li><a href="closure_audit_pro.html">Closure Process</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        
+        <h1 id="audit" style="text-align:center;">Security Remediation Report</h1>
+
+        <div class="section-header">1. Session Management</div>
+        <div class="audit-row">
+            <div class="column">
+                <strong>Standard:</strong><br>
+                ISO/IEC 27001 Session Control
+            </div>
+            <div class="column">
+                <div class="box box-wrong">
+                    ❌ <strong>WRONG</strong>
+                    <ul><li>Session ID in URL</li></ul>
+                    <code>session_id($_GET['sid']);</code>
+                </div>
+            </div>
+            <div class="column">
+                <div class="box box-true">
+                    ✅ <strong>TRUE</strong>
+                    <ul><li>HttpOnly / Regeneration</li></ul>
+                    <code>session_regenerate_id(true);
+ini_set('session.cookie_httponly', 1);</code>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-header">2. PostgreSQL Data Entry</div>
+        <div class="audit-row">
+            <div class="column">
+                <strong>Standard:</strong><br>
+                SQLi Prevention (OWASP A03)
+            </div>
+            <div class="column">
+                <div class="box box-wrong">
+                    ❌ <strong>WRONG</strong>
+                    <ul><li>Direct Variable Input</li></ul>
+                    <code>$sql = "INSERT INTO users VALUES ('$name')";</code>
+                </div>
+            </div>
+            <div class="column">
+                <div class="box box-true">
+                    ✅ <strong>TRUE</strong>
+                    <ul><li>Parameterized PDO</li></ul>
+                    <code>$stmt = $pdo->prepare("INSERT INTO users...");
+$stmt->execute([$name]);</code>
+                </div>
+            </div>
+        </div>
+
+        <div id="closure" class="section-header" style="background: #27ae60;">📜 Closure Process Audit</div>
+        <div class="audit-row" style="grid-template-columns: 1fr;">
+            <div class="column" style="background: #fff; border: 1px solid #27ae60; border-radius: 0 0 8px 8px;">
+                <h3>Final Verification Steps</h3>
+                <ol>
+                    <li><strong>Code Review:</strong> All <code>pg_query</code> instances replaced with Prepared Statements.</li>
+                    <li><strong>Configuration:</strong> <code>php.ini</code> updated with <code>session.cookie_secure = 1</code>.</li>
+                    <li><strong>Verification:</strong> Pentest confirms no Session Fixation or SQLi possible.</li>
+                </ol>
+                <div class="box-true" style="padding:15px; border-radius:5px;">
+                    <strong>Status: COMPLIANT</strong> - This audit is closed and certified as secure.
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <footer style="text-align: center; padding: 40px; color: #7f8c8d;">
+        © 2026 Secure Systems Audit | Adaptive Responsive Framework
+    </footer>
+
+</body>
+</html>

@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        /* --- Navigation Bar Styles --- */
+        .navbar {
+            background: #2c3e50; /* Dark professional blue */
+            color: white;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed; /* Stays at the top while scrolling */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 70px;
+            z-index: 1000;
+            box-sizing: border-box;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .nav-logo {
+            font-weight: bold;
+            font-size: 1.4rem;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-links {
+            list-style: none;
+            display: flex;
+            margin: 0;
+            padding: 0;
+        }
+
+        .nav-links li {
+            margin-left: 25px;
+        }
+
+        .nav-links a {
+            color: #ecf0f1;
+            text-decoration: none;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 8px 12px;
+            border-radius: 4px;
+        }
+
+        .nav-links a:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #3498db;
+        }
+
+        /* Mobile menu styles */
+        .menu-toggle {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+        }
+
+        .menu-toggle span {
+            width: 25px;
+            height: 3px;
+            background: white;
+            margin: 3px 0;
+            transition: 0.3s;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            padding: 20px;
+            padding-top: 90px; /* Add space for fixed navbar */
+        }
+
+        .container {
+            max-width: 900px;
+            margin: auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 6px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+
+        h3 {
+            margin-bottom: 10px;
+            color: #34495e;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-top: 10px;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px;
+            margin-top: 4px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        .output {
+            margin-top: 30px;
+            border-top: 2px solid #ddd;
+            padding-top: 20px;
+            display: none;
+        }
+
+        .email-box {
+            background: #fafafa;
+            padding: 20px;
+            border: 1px solid #ddd;
+            white-space: pre-line;
+            overflow-x: auto;
+        }
+
+        .note {
+            background-color: #f8f9fa;
+            border-left: 4px solid #007bff;
+            padding: 10px 15px;
+            margin: 20px 0;
+            border-radius: 0 4px 4px 0;
+        }
+
+        .note ul {
+            margin-top: 10px;
+            padding-left: 20px;
+        }
+
+        pre {
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+
+        /* Responsive Styles */
+        @media screen and (max-width: 768px) {
+            .menu-toggle {
+                display: flex;
+            }
+
+            .nav-links {
+                position: fixed;
+                left: -100%;
+                top: 70px;
+                flex-direction: column;
+                background-color: #2c3e50;
+                width: 100%;
+                text-align: center;
+                transition: 0.3s;
+                box-shadow: 0 10px 27px rgba(0,0,0,0.05);
+                padding: 20px 0;
+            }
+
+            .nav-links.nav-active {
+                left: 0;
+            }
+
+            .nav-links li {
+                margin: 15px 0;
+            }
+
+            .nav-logo {
+                font-size: 1.2rem;
+            }
+
+            body {
+                padding: 15px;
+                padding-top: 90px;
+            }
+
+            .container {
+                padding: 15px;
+            }
+
+            h2 {
+                font-size: 1.5rem;
+            }
+
+            h3 {
+                font-size: 1.3rem;
+            }
+        }
+
+        @media screen and (max-width: 480px) {
+            .nav-logo {
+                font-size: 1rem;
+            }
+
+            body {
+                padding: 10px;
+                padding-top: 80px;
+            }
+
+            .container {
+                padding: 10px;
+            }
+
+            h2 {
+                font-size: 1.3rem;
+            }
+
+            h3 {
+                font-size: 1.1rem;
+            }
+
+            .email-box {
+                padding: 15px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-logo">🛡️ SECURE_AUDIT</div>
+        <div class="menu-toggle" onclick="document.querySelector('.nav-links').classList.toggle('nav-active')">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="secure_true_web.html">Secure Audit</a></li>
+            <li><a href="closure_audit_pro.html">Closure Process</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <h2>Code Integrity Hash Generation Steps</h2>
+
+        <h3>Step 1: Prepare Audited Source Code</h3>
+        <p>
+            Compress the complete audited source code into a single ZIP file.
+            This ensures integrity and consistency during hash generation.
+        </p>
+        <pre>
+    used Software Putty
+        </pre>
+        <pre>
+    Create zip file /var/www/html/
+        </pre>
+        <pre>
+    geri_audit_code.zip
+        </pre>
+
+        <h3>Step 2: Generate Hash Values (Linux / Ubuntu)</h3>
+
+        <strong>MD5 Hash</strong>
+        <pre>
+    md5sum geri_audit_code.zip
+        </pre>
+
+        <strong>SHA-1 Hash</strong>
+        <pre>
+    sha1sum geri_audit_code.zip
+        </pre>
+
+        <strong>SHA-256 Hash</strong>
+        <pre>
+    sha256sum geri_audit_code.zip
+        </pre>
+
+        <h3>Step 3: Generate Hash Values (Windows)</h3>
+
+        <strong>MD5 Hash</strong>
+        <pre>
+    certutil -hashfile geri_audit_code.zip MD5
+        </pre>
+
+        <strong>SHA-1 Hash</strong>
+        <pre>
+    certutil -hashfile geri_audit_code.zip SHA1
+        </pre>
+
+        <strong>SHA-256 Hash</strong>
+        <pre>
+    certutil -hashfile geri_audit_code.zip SHA256
+        </pre>
+
+        <h3>Step 4: Record Hash Values</h3>
+        <p>
+            Record the generated hash values in the audit report and ensure the
+            same ZIP file is preserved for verification.
+        </p>
+
+        <div class="note">
+            <strong>Important Audit Notes:</strong>
+            <ul>
+                <li>Always generate all hash values from the same ZIP file</li>
+                <li>Do not modify the source code after hash generation</li>
+                <li>Preserve the ZIP archive securely</li>
+                <li>Hash values confirm code integrity at audit time</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>Audit Closure – Required Details</h2>
+
+        <!-- APPLICATION DETAILS -->
+        <label>Programming Language</label>
+        <input id="language" value="">
+
+        <label>Environment Version</label>
+        <input id="version" value="">
+
+        <label>Application Name</label>
+        <input id="appname" value="">
+
+        <label>Staging URL</label>
+        <input id="staging" value="">
+
+        <label>Production URL</label>
+        <input id="production" value="">
+
+        <label>WAF Enabled (Yes / No)</label>
+        <input id="waf" value="Yes">
+
+        <!-- HASH VALUES -->
+        <label>MD5 Hash</label>
+        <input id="md5" value="">
+
+        <label>SHA-1 Hash</label>
+        <input id="sha1" value="">
+
+        <label>SHA-256 Hash</label>
+        <input id="sha256" value="">
+
+        <!-- SIGNATURE DETAILS -->
+        <h2 style="margin-top:25px;">Signature Details</h2>
+
+        <label>Name</label>
+        <input id="name" value="">
+
+        <label>Designation</label>
+        <input id="designation" value="">
+
+        <label>Department / Organization</label>
+        <input id="department" value="">
+
+        <button onclick="generateEmail()">Generate Email</button>
+
+        <!-- OUTPUT -->
+        <div class="output" id="output">
+            <h2>Email Preview</h2>
+            <div class="email-box" id="emailContent"></div>
+        </div>
+    </div>
+
+    <script>
+        function generateEmail() {
+            // Get all input values
+            const language = document.getElementById("language").value;
+            const version = document.getElementById("version").value;
+            const appname = document.getElementById("appname").value;
+            const staging = document.getElementById("staging").value;
+            const production = document.getElementById("production").value;
+            const waf = document.getElementById("waf").value;
+            const md5 = document.getElementById("md5").value;
+            const sha1 = document.getElementById("sha1").value;
+            const sha256 = document.getElementById("sha256").value;
+            const name = document.getElementById("name").value;
+            const designation = document.getElementById("designation").value;
+            const department = document.getElementById("department").value;
+
+            let emailText = `
+Dear Team,
+
+I hope this email finds you well.
+
+Thank you for sharing the closure report and for confirming the successful completion of all audit-related tasks for the Gujarat Engineering Research Institute (GERI). We acknowledge receipt of the same. Please note that the access credentials remain unchanged, as previously shared.
+
+As requested, the required details of the GERI Web Application are provided below:
+
+Application Details
+
+• Programming Language Used: ${language}
+• Environment Version Utilized: ${version}
+• Complete Name of the Web Application: ${appname}
+
+Application URLs
+
+• Staging URL: ${staging}
+• Production URL: ${production}
+• Web Application Firewall (WAF) Enabled on Production: ${waf}
+
+Code Integrity Hash Values
+
+• MD5 Hash: ${md5}
+• SHA-1 Hash: ${sha1}
+• SHA-256 Hash: ${sha256}
+
+Please feel free to let us know if any additional information or clarification is required from our end.
+
+Thank you for your support and coordination throughout the audit process.
+
+Warm regards,
+ ${name}
+ ${designation}
+ ${department}
+            `;
+
+            document.getElementById("emailContent").innerText = emailText;
+            document.getElementById("output").style.display = "block";
+            
+            // Close mobile menu if open
+            document.querySelector('.nav-links').classList.remove('nav-active');
+        }
+
+        // Close mobile menu when clicking on a link
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                document.querySelector('.nav-links').classList.remove('nav-active');
+            });
+        });
+    </script>
+</body>
+</html>
